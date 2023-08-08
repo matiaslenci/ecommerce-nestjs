@@ -4,6 +4,8 @@
 
 # Ecommerce API 
 
+``` pnpm install ```
+
 
 
 
