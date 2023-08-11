@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 //Agregamos el decorador entity para declararlo como una tabla en nuestra db
 @Entity()
@@ -13,7 +13,7 @@ export class Product {
   })
   title: string;
 
-  @Column('numeric', {
+  @Column('float', {
     default: 0,
   })
   price: number;
@@ -48,4 +48,19 @@ export class Product {
     type: 'text',
   })
   gender: string;
+
+  /**
+   * Se ejecuta antes de crear un producto en la tabla
+   */
+  @BeforeInsert()
+  checkSlugInser() {
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+
+    this.slug = this.slug
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
 }
