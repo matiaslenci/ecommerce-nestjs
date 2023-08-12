@@ -5,10 +5,10 @@ export class PaginationDto {
   @IsPositive()
   @IsOptional()
   @Type(() => Number) // enableImplicitConversions: true
-  limit?: number;
+  limit?: number; // Limite de productos que debe traer
 
   @IsOptional()
   @Min(0)
   @Type(() => Number)
-  offset?: number;
+  offset?: number; // Trae los productos apartir del producto n°...
 }
