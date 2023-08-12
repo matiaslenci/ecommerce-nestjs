@@ -45,13 +45,26 @@ export class ProductsService {
     });
   }
 
+  /**
+   *
+   * Busca un producto de la db
+   *
+   * @param term slug - titulo - uuid
+   * @returns product que busca
+   */
   async findOne(term: string) {
     let product: Product;
 
     if (isUUID(term)) {
       product = await this.productRepository.findOneBy({ id: term });
     } else {
-      product = await this.productRepository.findOneBy({ slug: term });
+      const queryBuilder = this.productRepository.createQueryBuilder();
+      product = await queryBuilder
+        .where('LOWER(title) =:title or slug =:slug', {
+          title: term.toLowerCase(),
+          slug: term.toLowerCase(),
+        })
+        .getOne();
     }
 
     if (!product)
