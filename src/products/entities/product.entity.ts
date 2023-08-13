@@ -55,6 +55,13 @@ export class Product {
   })
   gender: string;
 
+  //otra forma de definir el tipo
+  @Column('text', {
+    array: true,
+    default: [],
+  })
+  tags: string[];
+
   /**
    * Se ejecuta antes de crear un producto en la tabla
    */

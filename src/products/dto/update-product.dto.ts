@@ -44,4 +44,9 @@ export class UpdateProductDto {
   @IsIn(['men', 'women', 'kid', 'unisex'])
   @IsOptional()
   gender?: string;
+
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  tags?: string[];
 }
