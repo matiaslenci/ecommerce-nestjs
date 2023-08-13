@@ -1,4 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 //Agregamos el decorador entity para declararlo como una tabla en nuestra db
 @Entity()
@@ -54,10 +60,25 @@ export class Product {
    */
   @BeforeInsert()
   checkSlugInser() {
+    //Si no existe el slug lo crea con el titulo del producto
+    //Eliminamos los espacios y los apostrofes de la cadena
+    //Lo pasamos a minusculas y lo guardamos en el slug del producto.
     if (!this.slug) {
       this.slug = this.title;
     }
 
+    this.slug = this.slug
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
+
+  /**
+   *  Se ejecuta antes de actualizar un producto en la tabla
+   */
+  @BeforeUpdate()
+  checkSlugUpdate() {
+    //El slug no puede tener espacios en blanco
     this.slug = this.slug
       .toLowerCase()
       .replaceAll(' ', '_')

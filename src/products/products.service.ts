@@ -60,6 +60,7 @@ export class ProductsService {
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder();
       product = await queryBuilder
+
         .where('LOWER(title) =:title or slug =:slug', {
           title: term.toLowerCase(),
           slug: term.toLowerCase(),
@@ -73,8 +74,22 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto,
+    });
+
+    if (!product)
+      throw new NotFoundException(`Producto con id: ${id} no encontrado`);
+
+    try {
+      await this.productRepository.save(product);
+
+      return product;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   async remove(id: string) {
