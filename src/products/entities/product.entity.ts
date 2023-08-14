@@ -3,8 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ProductImage } from './';
 
 //Agregamos el decorador entity para declararlo como una tabla en nuestra db
 @Entity()
@@ -61,6 +63,13 @@ export class Product {
     default: [],
   })
   tags: string[];
+
+  //Relacion de uno a muchos
+  //El producto puede tener muchas imagenes
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+  })
+  images?: ProductImage;
 
   /**
    * Se ejecuta antes de crear un producto en la tabla
