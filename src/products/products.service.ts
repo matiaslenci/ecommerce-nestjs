@@ -109,7 +109,10 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     // Desestructuramos la propiedad images y la resto del objeto que nos llega
     const { images, ...toUpdate } = updateProductDto;
 
@@ -122,15 +125,40 @@ export class ProductsService {
     if (!product)
       throw new NotFoundException(`Producto con id: ${id} no encontrado`);
 
-    //Create query runner para actualizar el producto
+    // Create query runner para actualizar el producto
     const queryRunner = this.dataSrc.createQueryRunner();
 
-    try {
-      // Actualizamos el producto
-      await this.productRepository.save(product);
+    // Conectamos con la base de datos
+    await queryRunner.connect();
+    // Iniciamos la transaccion
+    await queryRunner.startTransaction();
 
+    try {
+      // Si viene una nueva imagen la agregamos a la coleccion de imagenes del producto
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+        // Creamos una nueva coleccion de imagenes
+        product.images = images.map((image) =>
+          this.productImageRepository.create({ url: image }),
+        );
+      }
+
+      // Guardamos el producto
+      await queryRunner.manager.save(product);
+
+      // Commit de la transaccion
+      await queryRunner.commitTransaction();
+
+      // Desconectamos de la base de datos
+      await queryRunner.release();
+
+      // Retornamos el producto con el id
       return product;
+      //👇 Para que no retorne el id del producto
+      //* return this.findOnePlain(id);
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       this.handleDBExceptions(error);
     }
   }
