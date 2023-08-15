@@ -69,7 +69,7 @@ export class Product {
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
     cascade: true,
   })
-  images?: ProductImage;
+  images?: ProductImage[];
 
   /**
    * Se ejecuta antes de crear un producto en la tabla

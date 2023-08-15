@@ -49,4 +49,9 @@ export class UpdateProductDto {
   @IsArray()
   @IsOptional()
   tags?: string[];
+
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  images?: string[];
 }
