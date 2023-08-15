@@ -180,4 +180,26 @@ export class ProductsService {
       'Error inesperado, revise los serves logs',
     );
   }
+
+  /**
+   *
+   * Borra todos los productos de la base de datos
+   * ! No usar en producción
+   *
+   * @returns productos eliminados
+   */
+  async deleteAllProducts() {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test'
+    ) {
+      const query = this.productRepository.createQueryBuilder('product');
+
+      try {
+        return await query.delete().where({}).execute();
+      } catch (error) {
+        this.handleDBExceptions(error);
+      }
+    }
+  }
 }

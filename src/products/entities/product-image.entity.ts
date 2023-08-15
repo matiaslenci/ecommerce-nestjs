@@ -11,6 +11,10 @@ export class ProductImage {
 
   //Relación con la entidad Product y el campo images
   //Una imagen pertenece a un producto
-  @ManyToOne(() => Product, (product) => product.images)
+  //Y un producto puede tener muchas imagenes
+  //Borra todas las imagenes de un producto cuando se borra el producto
+  @ManyToOne(() => Product, (product) => product.images, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 }
